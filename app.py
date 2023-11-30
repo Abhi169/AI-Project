@@ -12,9 +12,12 @@ def check_grammar(text):
 def index():
     if request.method == 'POST':
         text = request.form['text']
-        matches = check_grammar(text)
-        return jsonify(html=render_template('result_partial.html', text=text, matches=matches))
+        try:
+            matches = check_grammar(text)
+            return jsonify(html=render_template('result_partial.html', text=text, matches=matches))
+        except Exception as e:
+            return jsonify(error=str(e))
     return render_template('index.html', matches=None)
 
 if __name__ == '__main__':
-    app.run(debug=False,host='0.0.0.0')
+    app.run(debug=False, host='0.0.0.0')
