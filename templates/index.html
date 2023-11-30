@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Checker</title>
+    <style>
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        textarea {
+            display: block;
+            margin: 0 auto;
+        }
+        button {
+            display: block;
+            margin: 0 auto;
+            padding: 5px;
+            background: #50C878;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .mistake {
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        .suggestion {
+            color: #5bc0de;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#grammarForm').submit(function(e){
+                e.preventDefault();
+                // Hide existing results and reset loading message
+                $('#results').html('<p id="loadingMessage">Please wait for the results...</p>');
+                $.ajax({
+                    type: 'POST',
+                    url: '/',
+                    data: $('#grammarForm').serialize(),
+                    dataType: 'json',
+                    success: function(response){
+                        $('#results').html(response.html);
+                    }
+                });
+            });
+        });
+    </script>      
+</head>
+<body>
+    <h1>Grammar Checker</h1>
+    <form id="grammarForm" method="post" action="/">
+        <textarea name="text" rows="10" cols="50"></textarea>
+        <br>
+        <button type="submit">Check Grammar</button>
+    </form>
+
+    <div id="results">
+        <p id="loadingMessage" style="display: none;">Please wait for the results...</p>
+
+        {% if matches %}
+            <h1>Grammar Checker Result</h1>
+            <p>Original Text:</p>
+            <p>{{ text }}</p>
+            
+            <p>Grammar Mistakes:</p>
+            <ul>
+                {% for match in matches %}
+                    <li>
+                        <span class="mistake">{{ match.ruleIssueType }}:</span> {{ match.message }}
+                        {% if match.replacements %}
+                            <br>
+                            Suggestions:
+                            <ul>
+                                {% for suggestion in match.replacements %}
+                                    <li class="suggestion">{{ suggestion }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>

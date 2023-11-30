@@ -1,0 +1,23 @@
+<h1>Grammar Checker Result</h1>
+<p style="color: #333; font-weight: bold;">Original Text:</p>
+<p>{{ text }}</p>
+
+<p style="font-weight: bolder;">Grammar Mistakes:</p>
+<ul>
+    {% for match in matches %}
+        <li>
+            <span class="mistake">{{ match.ruleIssueType }}:</span> {{ match.message }}
+            {% if match.replacements %}
+                <br>
+                <br>
+                Suggestions:
+                <br>
+                <ul>
+                    {% for suggestion in match.replacements %}
+                        <li class="suggestion">{{ suggestion }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
