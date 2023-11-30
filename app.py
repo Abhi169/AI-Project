@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, jsonify
-from language_tool_python import LanguageTool
+import language_tool_python
 
 app = Flask(__name__)
 
-def check_grammar(text):
-    tool = LanguageTool('en-US')
+def check_grammar(text, lang='en-US'):
+    tool = language_tool_python.LanguageToolPublicAPI(lang)
     matches = tool.check(text)
     return matches
 
